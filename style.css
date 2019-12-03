@@ -48,3 +48,6 @@ html, body {
   border-right: 40px solid black;
   border-top: 40px solid transparent;
 }
+.strike{
+  background-color: #000 !important;
+}

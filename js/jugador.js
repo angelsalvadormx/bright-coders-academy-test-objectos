@@ -1,14 +1,16 @@
 class Jugador {
   constructor() {
     this.marcador = [];
-    this.puntosTotales = 0;
     this.pinosDePie = 10;
     this.contTiros = 1;
     this.numTiro = 0;
     this.ultimoTiro = 0;
+    this.bonus = false;
+    this.bonusStrike = false;
+    this.limiteNumTiros = 2;
   }
   tirar() {
-    if (this.contTiros <= 10 && this.numTiro == 2) {
+    if (this.contTiros <= 10 && this.numTiro == this.limiteNumTiros) {
       this.contTiros++;
       this.pinosDePie = 10;
     }
@@ -17,69 +19,104 @@ class Jugador {
       return -1;
     }
     this.numTiro++;
-    if (this.numTiro > 2) {
+    if (this.numTiro > this.limiteNumTiros) {
       this.numTiro = 1;
     }
     return Math.floor(Math.random() * this.pinosDePie);
   }
   guardarTiro(tiro, bonus) {
+    console.log("tiro", tiro);
+
     let obj = {};
     this.pinosDePie -= tiro;
+    this.ultimoTiro = tiro;
+
     if (this.numTiro == 1) {
+      if (tiro == 10) {
+        this.bonusStrike = true;
+      }
       obj = {
         total: 0,
-        izq: tiro,
-        der: 0
+        der: tiro,
+        izq: 0
       }
       if (this.bonus == true) {
         let pos = this.marcador.length - 1;
-        console.log(this.marcador);
         this.marcador[pos].total += tiro;
-        
-        this.actulizarCuadro(pos+1,this.marcador[pos].total);
+        this.actulizarCuadro(pos + 1, this.marcador[pos].total);
         this.bonus = false;
-        console.log("bonus....",this.bonus);
-        
       }
     } else if (this.numTiro == 2) {
+      console.log(this.marcador);
       obj = this.marcador.pop();
-      obj.der = tiro;
+      obj.izq = tiro;
       if ((obj.izq + obj.der) == 10) {
         this.bonus = true;
       }
+    } else if (this.numTiro == 3) {
+      let pos = this.marcador.length - 1;
+      this.marcador[pos].total += tiro;
+      this.actulizarCuadro(pos + 1, this.marcador[pos].total);
     }
 
-    obj.total = obj.izq + obj.der + bonus;
-    this.puntosTotales += tiro;
+    if (this.bonusStrike === true) {
+      obj.izq = 0;
+      this.numTiro = 2;
+    }
+
+    if ((this.bonusStrike === true || this.bonus === true) && this.contTiros == 10) {
+      this.limiteNumTiros = 3;
+    }
+
+    obj.total = bonus + this.calcularTotal(obj);
     this.marcador.push(obj);
-    this.ultimoTiro = tiro;
     this.actualizarTablero();
   }
 
-  actulizarCuadro(idCuadro,total){
+  actulizarCuadro(idCuadro, total) {
     console.log(idCuadro);
-    
+
     document.getElementById(idCuadro).getElementsByClassName('total')[0].innerText = total;
   }
-
+  obtenerTotal() {
+    let pos = this.marcador.length - 1;
+    return this.marcador[pos].total
+    /*this.marcador.forEach(element => {
+      debugger;
+      total += element.total;
+    });*/
+  }
+  calcularTotal(obj) {
+    let total = 0
+    let pos = this.marcador.length - 1;
+    console.log(pos);
+    if (pos != -1) {
+      total = this.marcador[pos].total + obj.izq + obj.der;
+    } else {
+      total = obj.izq + obj.der;
+    }
+    return total;
+  }
   actualizarTablero() {
     let cuadros = document.getElementById(this.contTiros);
-    console.log(this.numTiro);
-    console.log(cuadros);
 
     let cuadro = cuadros.getElementsByClassName('cuadro' + this.numTiro)[0];
-    
-    
+
+
     if (this.numTiro == 2) {
-      cuadros.getElementsByClassName('total')[0].innerText = this.puntosTotales;
-      console.log("bonus",this.bonus);
-      
+      cuadros.getElementsByClassName('total')[0].innerText = this.obtenerTotal();
+      console.log("bonus", this.bonus);
+
       if (this.bonus === true) {
         cuadro.classList.add('repuesto');
-      }else{
+      } else if (this.bonusStrike === true) {
+        cuadro.classList.add('strike');
+        this.bonus = true;
+        this.bonusStrike = false;
+      } else {
         cuadro.innerText = this.ultimoTiro;
       }
-    }else{
+    } else {
       cuadro.innerText = this.ultimoTiro;
     }
   }
