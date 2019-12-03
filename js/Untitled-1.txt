@@ -1,0 +1,98 @@
+class Jugador {
+  constructor() {
+    this.puntosTotales = 0;
+    this.marcador = [];
+    this.numTiro = 1;
+    this.ultimoTiro = 0;
+    this.oportunidad = 1;
+    this.pinosDePie = 10;
+    this.bonus = false;
+  }
+  oportunidades() {
+    this.oportunidad++;
+  }
+  tirar() {
+    if (this.numTiro <= 10 && this.oportunidad > 2) {
+      this.numTiro++;
+      this.oportunidad = 1;
+      this.pinosDePie = 10;
+    }
+    if (this.numTiro > 10) {
+      alert('Juego terminado');
+      return -1;
+    }
+    return Math.floor(Math.random() * this.pinosDePie);
+  }
+
+
+  guardarTiro(tiro, bonus) {
+    var obj = {}
+    this.pinosDePie -= tiro
+    console.log(this.bonus);
+    
+    if (this.oportunidad == 1) {
+      obj = {
+        total: 0,
+        izq: tiro,
+        der: 0
+      }
+      if (this.bonus === true) {
+        this.marcador[this.marcador.length - 1].total += tiro;
+      }
+    } else if (this.oportunidad == 2) {
+      obj = this.marcador.pop();
+      //obj.der = tiro;
+      obj.der = 5;
+      console.log(obj);
+      console.log(obj.der + obj.izq);
+      
+      if ((obj.der + obj.izq) == 10) {
+        console.log('entra 10');
+        
+        this.bonus = true;
+      }
+    }
+    obj.izq = 5;
+    console.log(obj);
+    
+    
+    obj.total = obj.izq + obj.der + bonus;
+    this.marcador.push(obj);
+    console.log(this.marcador);
+    
+    this.ultimoTiro = 5;
+    this.puntosTotales += 5;
+    console.log("this bonus",this.bonus);
+    
+    if(this.bonus === true){
+      this.actulizarTablero('repuesto');
+    }else{
+      this.actulizarTablero();
+    }
+  }
+
+
+
+  actulizarTablero(tipo) {
+    let cuadros = document.getElementById(this.numTiro);
+    let cuadro = cuadros.getElementsByClassName('cuadro' + this.oportunidad)[0];
+
+    if(tipo != 'repuesto'){
+      cuadro.innerText = this.ultimoTiro; 
+    }
+    
+    if (this.oportunidad == 2) {
+      if(tipo == 'repuesto'){
+        cuadro.classList.add('repuesto');
+      }
+      cuadros.getElementsByClassName('total')[0].innerText = this.puntosTotales;
+    }else{
+      if (this.bonus === true) {
+        console.log('entraaa');
+        
+        document.getElementById(this.numTiro - 1).getElementsByClassName('total')[0].innerText = this.marcador[this.marcador.length - 2].total;
+        this.bonus = false; 
+      }
+    }
+  }
+}
