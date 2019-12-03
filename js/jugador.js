@@ -25,7 +25,6 @@ class Jugador {
     return Math.floor(Math.random() * this.pinosDePie);
   }
   guardarTiro(tiro, bonus) {
-    console.log("tiro", tiro);
 
     let obj = {};
     this.pinosDePie -= tiro;
@@ -47,7 +46,6 @@ class Jugador {
         this.bonus = false;
       }
     } else if (this.numTiro == 2) {
-      console.log(this.marcador);
       obj = this.marcador.pop();
       obj.izq = tiro;
       if ((obj.izq + obj.der) == 10) {
@@ -74,22 +72,16 @@ class Jugador {
   }
 
   actulizarCuadro(idCuadro, total) {
-    console.log(idCuadro);
 
     document.getElementById(idCuadro).getElementsByClassName('total')[0].innerText = total;
   }
   obtenerTotal() {
     let pos = this.marcador.length - 1;
     return this.marcador[pos].total
-    /*this.marcador.forEach(element => {
-      debugger;
-      total += element.total;
-    });*/
   }
   calcularTotal(obj) {
     let total = 0
     let pos = this.marcador.length - 1;
-    console.log(pos);
     if (pos != -1) {
       total = this.marcador[pos].total + obj.izq + obj.der;
     } else {
@@ -105,7 +97,6 @@ class Jugador {
 
     if (this.numTiro == 2) {
       cuadros.getElementsByClassName('total')[0].innerText = this.obtenerTotal();
-      console.log("bonus", this.bonus);
 
       if (this.bonus === true) {
         cuadro.classList.add('repuesto');

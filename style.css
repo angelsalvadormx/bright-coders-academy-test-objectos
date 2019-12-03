@@ -10,9 +10,7 @@ html, body {
 #marcador {
   height: 100px;
   display: flex;
-  width: 95%;
   margin-left: 10px;
-  border-bottom: 1px solid #000;
   border-right: 1px solid #000;
 }
 
@@ -22,6 +20,7 @@ html, body {
   display: flex;
   flex-direction: column;
   text-align: center;
+  border-bottom: 1px solid #000;
 }
 
 #marcador section>i, #marcador section header {
@@ -48,6 +47,19 @@ html, body {
   border-right: 40px solid black;
   border-top: 40px solid transparent;
 }
+#marcador section:last-child .cuadro2.repuesto{
+  border-top: 49px solid transparent;
+}
 .strike{
   background-color: #000 !important;
+}
+
+#btn{
+  margin: 10px;
+  padding: 10px 25px;
+  background-color: #353567;
+  color: #FFF;
+  border: 1px solid;
+  border-radius: 8px;
+  outline: none;
 }
